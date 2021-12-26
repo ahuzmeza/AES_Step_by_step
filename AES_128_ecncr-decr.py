@@ -1,7 +1,6 @@
 #! /usr/local/bin/python3
 import numpy as np
-from binascii import hexlify
-from copy import copy, deepcopy
+from copy import deepcopy
 
 from numpy.lib.utils import who
 
@@ -224,7 +223,6 @@ def sub_one_word_sbox(word, inv):
 		col = ord(word[1]) - 86
 	else:
 		col = int(word[1])+1
-	
  	# get the index base on row and col (16x16 grid)
 	sBoxIndex = (row*16) - (17-col)
 	# get the value from sbox without prefix
@@ -261,7 +259,6 @@ def mix_columns(state_matrix, inv):
 						[0x01, 0x01, 0x02, 0x03],
 						[0x03, 0x01, 0x01, 0x02]]
 		fixed_matrix = np.array(fixed_matrix, dtype=np.str_)
-		
 		rez_matrix = [[0x00, 0x00, 0x00, 0x00],
 						[0x00, 0x00, 0x00, 0x00],
 						[0x00, 0x00, 0x00, 0x00],
@@ -302,7 +299,6 @@ def mix_columns(state_matrix, inv):
 			s1 = mul_by_09(state[0][i]) ^ mul_by_0e(state[1][i]) ^ mul_by_0b(state[2][i]) ^ mul_by_0d(state[3][i])
 			s2 = mul_by_0d(state[0][i]) ^ mul_by_09(state[1][i]) ^ mul_by_0e(state[2][i]) ^ mul_by_0b(state[3][i])
 			s3 = mul_by_0b(state[0][i]) ^ mul_by_0d(state[1][i]) ^ mul_by_09(state[2][i]) ^ mul_by_0e(state[3][i])
-			
 			state_matrix[0][i] = '{:02x}'.format(s0)
 			state_matrix[1][i] = '{:02x}'.format(s1)
 			state_matrix[2][i] = '{:02x}'.format(s2)
@@ -314,21 +310,22 @@ def key_expansion_schedule(key):
 	print("\n• Round Constant:")
 	for i in range(1,11):
 		print(f" rcon_{i}: {hex(Rcon[i])[:4]}")
-	w = [()]*44
+	words = [()]*44
 	# fill out first 4 words based on the key
 	for i in range(4):
-		w[i] = (key[4*i], key[4*i+1], key[4*i+2], key[4*i+3])
+		words[i] = (key[4*i], key[4*i+1], key[4*i+2], key[4*i+3])
+	
 	print("\nKey Expansion:\n--------------------------------------------------------------------")
 	print("• first 4 words ar first 4 sublets of 8 chars in key")
 	print("""• w[i] = if i mod 4  = 0, w[i-4] ⊕ g(w[-1])
        							!= 0, w[i-2] ⊕ w[i-1]""")
 	for i in range(4):
-		print(f"w[{i}]: {''.join(w[i])}")
+		print(f"w[{i}]: {''.join(words[i])}")
 	# fill out the rest based on previews words, rotword, subword and rcon values
 	for i in range(4, 44):
 		#get required previous keywords
-		temp = w[i-1]
-		word = w[i-4]
+		temp = words[i-1]
+		word = words[i-4]
 		temp_index = i-1
 		word_index = i-4
 		# if multiple of 4 use rot, sub, rcon etc
@@ -354,12 +351,11 @@ def key_expansion_schedule(key):
 		# creating strings of hex rather than tuple
 		word = ''.join(word)
 		temp = ''.join(temp)
-
 		# xor the two hex values
 		xord = str_xor_str(word, temp)
-		w[i] = (xord[:2], xord[2:4], xord[4:6], xord[6:8])
+		words[i] = (xord[:2], xord[2:4], xord[4:6], xord[6:8])
 	print()
-	return w
+	return words
 
 
 def add_rounkeys(roundkeys, state_matrix, inv):
@@ -395,7 +391,6 @@ def add_rounkeys(roundkeys, state_matrix, inv):
 			state_matrix = mix_columns(state_matrix, inv)
 			print("=======>state_matrix<=======")
 			print_matrix(state_matrix)
-   
 			print(f" 4) ⊕ RK_matrix[{rk_index}]:")
 			rk_matrix = create_rk_state_matrix_from_rk(roundkeys[i])	
 			print_matrix(rk_matrix)
@@ -423,11 +418,9 @@ def add_rounkeys(roundkeys, state_matrix, inv):
 		print(" 2) Rows are shifted right-> by offsets of 0,1,2, and 3 =>")
 		state_matrix = shift_rows(state_matrix, inv)
 		print_matrix(state_matrix)
-  
 		print(" 3) Substitution S-box =>")
 		state_matrix = matrix_sub_sbox(state_matrix, inv)
 		print_matrix(state_matrix)
-  
 		for i in range(1,10):
 			print(f"\nAdd Roundkey Round {i} ===============================================")
 			print(" state_matrix:")
@@ -438,16 +431,13 @@ def add_rounkeys(roundkeys, state_matrix, inv):
 			state_matrix = matrix_xor_matrix(state_matrix, rk_matrix)
 			print("=======>state_matrix<=======")
 			print_matrix(state_matrix)
-			
 			print(" 2) Mix Column:\nmultiplies 'fixed_matrix' against current state_matrix")
 			state_matrix = mix_columns(state_matrix, inv)
 			print("=======>state_matrix<=======")
 			print_matrix(state_matrix)
-			
 			print(" 3) Rows are shifted right-> by offsets of 0,1,2, and 3 =>")
 			state_matrix = shift_rows(state_matrix, inv)
 			print_matrix(state_matrix)
-   
 			print(" 4) Substitution S-box-inv =>")
 			state_matrix = matrix_sub_sbox(state_matrix, inv)
 			print_matrix(state_matrix)
@@ -465,22 +455,6 @@ def add_rounkeys(roundkeys, state_matrix, inv):
 		print()
 	return state_matrix
 
-# unuseful function to display 3 matricies side-by-side
-def matrix_state_xor_rk(state_matrix, roundkeys, index):
-	rk_matrix = create_rk_state_matrix_from_rk(roundkeys[10])	
-	print(f" state_matrix ⊕ rk_matrix[{index}]\t    =     result")
-	rez_matrix = matrix_xor_matrix(state_matrix, rk_matrix)
-	for i in range(4):
-		for a in range(4):
-			print(f"{state_matrix[i][a]}", end=" ")
-		print("\t", end='')
-		for b in range(4):
-			print(f" {rk_matrix[i][b]}", end=" ")
-		print("\t", end='')
-		for c in range(4):
-			print(f"{ rez_matrix[i][c]}", end=" ")
-		print()
-	return rez_matrix
 
 def print_plaintext_and_key(plaintext, key, p, k):
 	print("--------------------------------------------------------------------")
@@ -489,6 +463,7 @@ def print_plaintext_and_key(plaintext, key, p, k):
 	print("HEX   Plaintxt ---: " + ' '.join(plaintext)) 
 	print("HEX   Key --------: " + ' '.join(key))
 	print("--------------------------------------------------------------------")
+
 
 def main():
 # CHANGE VALUES HERE
@@ -509,9 +484,9 @@ def main():
 	plaintext_hex_list = p_list
 	print_plaintext_and_key(plaintext_hex_list, key_hex_list, plaintext, key)
 
-	#x = input("""Start process of encrypting then decrypting - Using AES 128-bit cipher.
-    #       
-    #       Press Enter to continue...\n""") 
+	x = input("""Start process of encrypting then decrypting - Using AES 128-bit cipher.
+           
+           Press Enter to continue...\n""") 
  
 	# state matrix will change throughout encryption and after decryption
 	state_matrix = np.array(plaintext_hex_list).reshape(4, 4).T
@@ -527,7 +502,6 @@ def main():
 # Encryption
 	encrypted_matrix  = deepcopy(add_rounkeys(roundkeys, state_matrix, False))
 	state_matrix = deepcopy(encrypted_matrix)
- 
 	print("\n====================================================================")
 	print("Encrypted Plaintext: ",end='')
 	print_matrix_as_list(state_matrix)
@@ -537,7 +511,6 @@ def main():
 	decrypted_matrix = deepcopy(add_rounkeys(roundkeys[::-1], state_matrix, True))
 	
 	print_plaintext_and_key(plaintext_hex_list, key_hex_list, plaintext, key)
-	
 	print("-==+1+==- Plaintext: ", end='')
 	print_matrix_as_list(decrypted_matrix)
 	print("-==+2+==- Encrypted: ", end='')
