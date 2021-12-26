@@ -146,10 +146,11 @@ def shift_rows(state_matrix, inv):
 
 def matrix_xor_matrix(state_matrix, rk_matrix):
 	# xor state matrix with round key matrix
+	rez_matrix = deepcopy(state_matrix)
 	for i in range(4):
 		for j in range(4):
-			state_matrix[i][j] = str_xor_str(state_matrix[i][j], rk_matrix[i][j])
-	return state_matrix
+			rez_matrix[i][j] = str_xor_str(state_matrix[i][j], rk_matrix[i][j])
+	return rez_matrix
 
 # takes two hex values and calculates hex1 xor hex2
 def hex_xor_hex(hex1, hex2):
@@ -451,7 +452,7 @@ def add_rounkeys(roundkeys, state_matrix, inv):
 			state_matrix = matrix_sub_sbox(state_matrix, inv)
 			print_matrix(state_matrix)
 		
-		print(f"\nAdd Roundkey Round 10 ===============================================")
+		print(f"\nAdd Roundkey Round 10 ===============================================")		
 		print(" state_matrix:")
 		print_matrix(state_matrix)
 		print(f" ⊕ RK_matrix[0]:")
@@ -460,31 +461,62 @@ def add_rounkeys(roundkeys, state_matrix, inv):
 		state_matrix = matrix_xor_matrix(state_matrix, rk_matrix)
 		print("=======>state_matrix<=======")
 		print_matrix(state_matrix)
-		print_ciphertext(state_matrix)	
+		print_ciphertext(state_matrix)
 		print()
 	return state_matrix
 
+# unuseful function to display 3 matricies side-by-side
+def matrix_state_xor_rk(state_matrix, roundkeys, index):
+	rk_matrix = create_rk_state_matrix_from_rk(roundkeys[10])	
+	print(f" state_matrix ⊕ rk_matrix[{index}]\t    =     result")
+	rez_matrix = matrix_xor_matrix(state_matrix, rk_matrix)
+	for i in range(4):
+		for a in range(4):
+			print(f"{state_matrix[i][a]}", end=" ")
+		print("\t", end='')
+		for b in range(4):
+			print(f" {rk_matrix[i][b]}", end=" ")
+		print("\t", end='')
+		for c in range(4):
+			print(f"{ rez_matrix[i][c]}", end=" ")
+		print()
+	return rez_matrix
+
+def print_plaintext_and_key(plaintext, key, p, k):
+	print("--------------------------------------------------------------------")
+	print("ASCII Plaintxt ---: '" + ''.join(p) + "'")
+	print("ASCII Key --------: '" + ''.join(k) + "'")
+	print("HEX   Plaintxt ---: " + ' '.join(plaintext)) 
+	print("HEX   Key --------: " + ' '.join(key))
+	print("--------------------------------------------------------------------")
+
 def main():
-	# Fix input, add method from string to 16x2 chars to hex list
-	#
-	# example
-	#key		  = ["54", "68", "61", "74", "73", "20", "6D", "79", "20", "4B", "75", "6E", "67", "20", "46", "75"]
-	#plaintext = ["54", "77", "6F", "20", "4F", "6E", "65", "20", "4E", "69", "6E", "65", "20", "54", "77", "6F"]
-	
-	# my
-	plaintext = ["54", "45", "4C", "45", "56", "49", "5A", "4F", "52", "55", "4C", "20", "45", "20", "48", "44"]
-	key = ["44", "4F", "52", "49", "4E", "41", "20", "41", "52", "45", "20", "43", "41", "49", "53", "45"]
-	 
-	print("--------------------------------------------------------------------")
-	#print("ASCII Plaintxt ---: " + bytearray.fromhex(''.join(plaintext)).decode())
-	#print("ASCII Key --------: " + bytearray.fromhex(''.join(key)).decode())
-	print("HEX   Plaintxt ---: " + ''.join(plaintext)) 
-	print("HEX   Key --------: " + ''.join(key))
-	print("--------------------------------------------------------------------")
-	
-	state_matrix = np.array(plaintext).reshape(4, 4).T
+# CHANGE VALUES HERE
+    # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+    # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+	plaintext = 'Two One Nine Two'#-=-=-=-=-=-=-
+	key 	  = 'Thats my Kung Fu'#-=-=-=-=-=-=-
+    # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+    # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+	plaintext = plaintext.strip()
+	key = key.strip()
+	p_hex_str = bytes(plaintext, encoding='utf8').hex()
+	k_hex_str = bytes(key, encoding='utf8').hex()
+	# split string p into list of 16 pairs of letters
+	p_list = [p_hex_str[i:i+2] for i in range(0, 32, 2)]
+	k_list = [k_hex_str[i:i+2] for i in range(0, 32, 2)]
+	key_hex_list = k_list
+	plaintext_hex_list = p_list
+	print_plaintext_and_key(plaintext_hex_list, key_hex_list, plaintext, key)
+
+	#x = input("""Start process of encrypting then decrypting - Using AES 128-bit cipher.
+    #       
+    #       Press Enter to continue...\n""") 
+ 
+	# state matrix will change throughout encryption and after decryption
+	state_matrix = np.array(plaintext_hex_list).reshape(4, 4).T
 	# add 10 roundkeys in 10 rounds
-	word_list = key_expansion_schedule(key)
+	word_list = key_expansion_schedule(key_hex_list)
     # rounkeys = split w into 10 sublists of 4 words
 	roundkeys = [''.join(word_list[i]+word_list[i+1]+word_list[i+2]+word_list[i+3]) for i in range(0, len(word_list), 4)]
   	# statematrix = plaintext as 4z4 matrix
@@ -503,6 +535,8 @@ def main():
  
  # Decryption
 	decrypted_matrix = deepcopy(add_rounkeys(roundkeys[::-1], state_matrix, True))
+	
+	print_plaintext_and_key(plaintext_hex_list, key_hex_list, plaintext, key)
 	
 	print("-==+1+==- Plaintext: ", end='')
 	print_matrix_as_list(decrypted_matrix)
