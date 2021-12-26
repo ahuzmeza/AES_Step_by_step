@@ -6,8 +6,6 @@ HEX   Key --------: 54 68 61 74 73 20 6d 79 20 4b 75 6e 67 20 46 75
 --------------------------------------------------------------------
 Start process of encrypting then decrypting - Using AES 128-bit cipher.
            
-           Press Enter to continue...
-
 • Round Constant:
  rcon_1: 0x10
  rcon_2: 0x20
