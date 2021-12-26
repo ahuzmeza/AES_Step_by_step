@@ -165,7 +165,7 @@ def hex_xor_hex(hex1, hex2):
 
 	#leading 0s get cut above, if not length 8 add a leading 0
 	if len(hexed) != 8:
-		hexed = '0' + hexed
+		hexed = '0'*(8-len(hexed)) + hexed
 
 	return hexed
 
@@ -184,19 +184,23 @@ def rot_word(word):
 
 #selects correct value from sbox based on the current word
 def sub_4_words_sbox(word):
+	_4_w = word
 	sWord = ()
 	for i in range(4):
+		w = _4_w[i]
+		if len(w) == 1:
+			w = '0'+w
 		# check first char, if its a letter(a-f) get corresponding decimal
 		# otherwise just take the value and add 1
-		if word[i][0].isdigit() == False:
-			row = ord(word[i][0]) - 86
+		if w[0].isdigit() == False:
+			row = ord(w[0]) - 86
 		else:
-			row = int(word[i][0])+1
+			row = int(w[0])+1
 		# repeat above for the seoncd char
-		if word[i][1].isdigit() == False:
-			col = ord(word[i][1]) - 86
+		if w[1].isdigit() == False:
+			col = ord(w[1]) - 86
 		else:
-			col = int(word[i][1])+1
+			col = int(w[1])+1
 		# get the index base on row and col (16x16 grid)
 		sBoxIndex = (row*16) - (17-col)
 		# get the value from sbox without prefix
@@ -317,8 +321,7 @@ def key_expansion_schedule(key):
 	
 	print("\nKey Expansion:\n--------------------------------------------------------------------")
 	print("• first 4 words ar first 4 sublets of 8 chars in key")
-	print("""• w[i] = if i mod 4  = 0, w[i-4] ⊕ g(w[-1])
-       							!= 0, w[i-2] ⊕ w[i-1]""")
+	print("• w[i] = if i mod 4 \n\t = 0, w[i-4] ⊕ g(w[-1]) \n\t!= 0, w[i-2] ⊕ w[i-1]\n")
 	for i in range(4):
 		print(f"w[{i}]: {''.join(words[i])}")
 	# fill out the rest based on previews words, rotword, subword and rcon values
@@ -333,7 +336,6 @@ def key_expansion_schedule(key):
 			x = rot_word(temp)
 			y = sub_4_words_sbox(x)
 			rcon = Rcon[int(i/4)]
-			temp = hex_xor_hex(y, hex(rcon)[2:])
 			#############
 			#print(f"w[{temp_index}] = ",''.join(temp))  
 			print(f"\ng(w[{temp_index}]) = ?")
@@ -344,6 +346,7 @@ def key_expansion_schedule(key):
 			print(f"\t3) w * rcon_{int(i/4)}")
 			print(f"\t{''.join(y)} ⊕ {hex(rcon)[:4]} = {''.join(temp)}")
 			print(f"\tg(w[{temp_index}])] = ", ''.join(temp))  
+			temp = hex_xor_hex(y, hex(rcon)[2:])
 			print(f"w[{temp_index+1}] = w[{word_index}] ⊕ g(w[{temp_index}]) =",''.join(temp))
 			print()
 		else:
@@ -351,7 +354,7 @@ def key_expansion_schedule(key):
 		# creating strings of hex rather than tuple
 		word = ''.join(word)
 		temp = ''.join(temp)
-		# xor the two hex values
+		# xor the two hex values		print(f"temp: {temp} type: {type(temp)}") 
 		xord = str_xor_str(word, temp)
 		words[i] = (xord[:2], xord[2:4], xord[4:6], xord[6:8])
 	print()
@@ -473,6 +476,7 @@ def main():
 	key 	  = 'Thats my Kung Fu'#-=-=-=-=-=-=-
     # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
     # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+    
 	plaintext = plaintext.strip()
 	key = key.strip()
 	p_hex_str = bytes(plaintext, encoding='utf8').hex()
