@@ -6,6 +6,8 @@ HEX   Key --------: 54 68 61 74 73 20 6d 79 20 4b 75 6e 67 20 46 75
 --------------------------------------------------------------------
 Start process of encrypting then decrypting - Using AES 128-bit cipher.
            
+           Press Enter to continue...
+
 • Round Constant:
  rcon_1: 0x10
  rcon_2: 0x20
@@ -21,8 +23,10 @@ Start process of encrypting then decrypting - Using AES 128-bit cipher.
 Key Expansion:
 --------------------------------------------------------------------
 • first 4 words ar first 4 sublets of 8 chars in key
-• w[i] = if i mod 4  = 0, w[i-4] ⊕ g(w[-1])
-       							!= 0, w[i-2] ⊕ w[i-1]
+• w[i] = if i mod 4 
+	 = 0, w[i-4] ⊕ g(w[-1]) 
+	!= 0, w[i-2] ⊕ w[i-1]
+
 w[0]: 54686174
 w[1]: 73206d79
 w[2]: 204b756e
@@ -34,8 +38,8 @@ g(w[3]) = ?
 	1) <-LShift w: 20467567
 	2) SubSbox w: b75a9d85
 	3) w * rcon_1
-	b75a9d85 ⊕ 0x10 = b65a9d85
-	g(w[3])] =  b65a9d85
+	b75a9d85 ⊕ 0x10 = 67204675
+	g(w[3])] =  67204675
 w[4] = w[0] ⊕ g(w[3]) = b65a9d85
 
 w[5] = w[3] ⊕ w[4] = e232fcf1
@@ -48,8 +52,8 @@ g(w[7]) = ?
 	1) <-LShift w: 79a293d6
 	2) SubSbox w: b63adcf6
 	3) w * rcon_2
-	b63adcf6 ⊕ 0x20 = b43adcf6
-	g(w[7])] =  b43adcf6
+	b63adcf6 ⊕ 0x20 = d679a293
+	g(w[7])] =  d679a293
 w[8] = w[4] ⊕ g(w[7]) = b43adcf6
 
 w[9] = w[7] ⊕ w[8] = 56082007
@@ -62,8 +66,8 @@ g(w[11]) = ?
 	1) <-LShift w: 3af7faa0
 	2) SubSbox w: 80682de0
 	3) w * rcon_3
-	80682de0 ⊕ 0x40 = 84682de0
-	g(w[11])] =  84682de0
+	80682de0 ⊕ 0x40 = a03af7fa
+	g(w[11])] =  a03af7fa
 w[12] = w[8] ⊕ g(w[11]) = 84682de0
 
 w[13] = w[11] ⊕ w[12] = d2600de7
@@ -76,8 +80,8 @@ g(w[15]) = ?
 	1) <-LShift w: 031efbc3
 	2) SubSbox w: 7b720f2e
 	3) w * rcon_4
-	7b720f2e ⊕ 0x80 = 73720f2e
-	g(w[15])] =  73720f2e
+	7b720f2e ⊕ 0x80 = c3031efb
+	g(w[15])] =  c3031efb
 w[16] = w[12] ⊕ g(w[15]) = 73720f2e
 
 w[17] = w[15] ⊕ w[16] = a11202c9
@@ -90,8 +94,8 @@ g(w[19]) = ?
 	1) <-LShift w: 52495b14
 	2) SubSbox w: 003b39fa
 	3) w * rcon_5
-	003b39fa ⊕ 0x10 = 103b39fa
-	g(w[19])] =  103b39fa
+	003b39fa ⊕ 0x10 = 1452495b
+	g(w[19])] =  1452495b
 w[20] = w[16] ⊕ g(w[19]) = 103b39fa
 
 w[21] = w[19] ⊕ w[20] = b1293b33
@@ -104,8 +108,8 @@ g(w[23]) = ?
 	1) <-LShift w: 429b69c6
 	2) SubSbox w: 2c14f9b4
 	3) w * rcon_6
-	2c14f9b4 ⊕ 0x20 = 0c14f9b4
-	g(w[23])] =  0c14f9b4
+	2c14f9b4 ⊕ 0x20 = c6429b69
+	g(w[23])] =  c6429b69
 w[24] = w[20] ⊕ g(w[23]) = 0c14f9b4
 
 w[25] = w[23] ⊕ w[24] = bd3dc287
@@ -118,8 +122,8 @@ g(w[27]) = ?
 	1) <-LShift w: 2e0e4eac
 	2) SubSbox w: 31ab2f91
 	3) w * rcon_7
-	31ab2f91 ⊕ 0x40 = 71ab2f91
-	g(w[27])] =  71ab2f91
+	31ab2f91 ⊕ 0x40 = ac2e0e4e
+	g(w[27])] =  ac2e0e4e
 w[28] = w[24] ⊕ g(w[27]) = 71ab2f91
 
 w[29] = w[27] ⊕ w[28] = cc96ed16
@@ -132,8 +136,8 @@ g(w[31]) = ?
 	1) <-LShift w: a8316ab2
 	2) SubSbox w: c2c70237
 	3) w * rcon_8
-	c2c70237 ⊕ 0x80 = 42c70237
-	g(w[31])] =  42c70237
+	c2c70237 ⊕ 0x80 = b2a8316a
+	g(w[31])] =  b2a8316a
 w[32] = w[28] ⊕ g(w[31]) = 42c70237
 
 w[33] = w[31] ⊕ w[32] = 8e51ef21
@@ -146,8 +150,8 @@ g(w[35]) = ?
 	1) <-LShift w: 954b6c56
 	2) SubSbox w: 2ab350b1
 	3) w * rcon_9
-	2ab350b1 ⊕ 0x1b = 31b350b1
-	g(w[35])] =  31b350b1
+	2ab350b1 ⊕ 0x1b = 56954b6c
+	g(w[35])] =  56954b6c
 w[36] = w[32] ⊕ g(w[35]) = 31b350b1
 
 w[37] = w[35] ⊕ w[36] = bfe2bf90
@@ -160,8 +164,8 @@ g(w[39]) = ?
 	1) <-LShift w: f1cbd8f7
 	2) SubSbox w: a11f6168
 	3) w * rcon_10
-	a11f6168 ⊕ 0x36 = 971f6168
-	g(w[39])] =  971f6168
+	a11f6168 ⊕ 0x36 = f7f1cbd8
+	g(w[39])] =  f7f1cbd8
 w[40] = w[36] ⊕ g(w[39]) = 971f6168
 
 w[41] = w[39] ⊕ w[40] = 28fddef8
@@ -316,7 +320,7 @@ Add Roundkey Round 0 ===============================================
 77  6e  69  54
 6f  65  6e  77
 20  20  65  6f
- ⊕ RK_matrix[0]:
+ ⊕ RK_matrix_0
 54  73  20  67
 68  20  4b  20
 61  6d  75  46
@@ -544,7 +548,7 @@ ba  84  e8  1b
 75  a4  8d  40
 f4  8d  06  7d
 7a  32  0e  5d
- 4) ⊕ RK_matrix[0]:
+ 4) ⊕ RK_matrix_1
 e2  91  b1  d6
 32  12  59  79
 fc  91  e4  a2
@@ -773,7 +777,7 @@ state_matrix[3][3] = (0)⊕(1)⊕(2)⊕(3)
 ce  4d  4b  c2
 89  71  be  88
 65  47  97  cd
- 4) ⊕ RK_matrix[0]:
+ 4) ⊕ RK_matrix_2
 56  c7  76  a0
 08  1a  43  3a
 20  b1  55  f7
@@ -1002,7 +1006,7 @@ aa  65  fa  88
 16  0c  05  3a
 3d  c1  de  2a
 b3  4b  5a  0a
- 4) ⊕ RK_matrix[0]:
+ 4) ⊕ RK_matrix_3
 d2  15  63  c3
 60  7a  39  03
 0d  bc  e9  1e
@@ -1231,7 +1235,7 @@ state_matrix[3][3] = (0)⊕(1)⊕(2)⊕(3)
 d8  94  e0  e0
 53  ea  9e  25
 24  40  73  7b
- 4) ⊕ RK_matrix[0]:
+ 4) ⊕ RK_matrix_4
 a1  b4  d7  14
 12  68  51  52
 02  be  57  49
@@ -1460,7 +1464,7 @@ state_matrix[3][3] = (0)⊕(1)⊕(2)⊕(3)
 78  1e  0c  7a
 1b  a7  6f  0a
 5b  62  00  3f
- 4) ⊕ RK_matrix[0]:
+ 4) ⊕ RK_matrix_5
 b1  05  d2  c6
 29  41  10  42
 3b  85  d2  9b
@@ -1689,7 +1693,7 @@ a9  37  aa  f2
 ae  d8  0c  21
 e7  6c  b1  9c
 f0  fd  67  3b
- 4) ⊕ RK_matrix[0]:
+ 4) ⊕ RK_matrix_6
 bd  b8  6a  ac
 3d  7c  6c  2e
 c2  47  95  0e
@@ -1918,7 +1922,7 @@ state_matrix[3][3] = (0)⊕(1)⊕(2)⊕(3)
 af  ec  8c  fa
 63  39  04  66
 4b  fb  b1  d7
- 4) ⊕ RK_matrix[0]:
+ 4) ⊕ RK_matrix_7
 cc  74  1e  b2
 96  ea  86  a8
 ed  aa  3f  31
@@ -2147,7 +2151,7 @@ e8  8a  4b  f5
 74  75  ee  e6
 d3  1f  75  58
 55  8a  0c  38
- 4) ⊕ RK_matrix[0]:
+ 4) ⊕ RK_matrix_8
 8e  fa  e4  56
 51  bb  3d  95
 ef  45  7a  4b
@@ -2376,7 +2380,7 @@ b6  e7  51  8c
 84  88  98  ca
 34  60  66  fb
 e8  d7  70  51
- 4) ⊕ RK_matrix[0]:
+ 4) ⊕ RK_matrix_9
 bf  45  a1  f7
 e2  59  64  f1
 bf  fa  80  cb
@@ -2399,7 +2403,7 @@ bc  4d  1c  a7
 3e  b0  e2  33
 8e  04  3d  b8
 a7  bc  4d  1c
- 3) ⊕ RK_matrix[10]:
+ 3) ⊕ RK_matrix_10
 28  6d  cc  3b
 fd  a4  c0  31
 de  24  a4  6f
@@ -2425,7 +2429,7 @@ Add Roundkey Round 0 ===============================================
 c3  14  22  02
 50  20  99  d7
 5f  f6  b3  3a
- ⊕ RK_matrix[10]:
+ ⊕ RK_matrix_10
 28  6d  cc  3b
 fd  a4  c0  31
 de  24  a4  6f
@@ -2452,7 +2456,7 @@ Add Roundkey Round 1 ===============================================
 66  d1  fc  3b
 8b  9a  e6  30
 78  65  c4  89
- 1) ⊕ RK_matrix[9]:
+ 1) ⊕ RK_matrix_9
 bf  45  a1  f7
 e2  59  64  f1
 bf  fa  80  cb
@@ -2486,7 +2490,7 @@ Add Roundkey Round 2 ===============================================
 25  ce  d3  73
 3c  5a  0f  13
 74  a8  0a  54
- 1) ⊕ RK_matrix[8]:
+ 1) ⊕ RK_matrix_8
 8e  fa  e4  56
 51  bb  3d  95
 ef  45  7a  4b
@@ -2520,7 +2524,7 @@ Add Roundkey Round 3 ===============================================
 39  06  0a  52
 8e  93  3b  57
 5d  f8  95  bd
- 1) ⊕ RK_matrix[7]:
+ 1) ⊕ RK_matrix_7
 cc  74  1e  b2
 96  ea  86  a8
 ed  aa  3f  31
@@ -2554,7 +2558,7 @@ Add Roundkey Round 4 ===============================================
 93  a4  60  0f
 25  2b  24  92
 77  e8  40  75
- 1) ⊕ RK_matrix[6]:
+ 1) ⊕ RK_matrix_6
 bd  b8  6a  ac
 3d  7c  6c  2e
 c2  47  95  0e
@@ -2588,7 +2592,7 @@ Add Roundkey Round 5 ===============================================
 51  5f  1c  38
 20  22  bd  91
 68  f0  32  56
- 1) ⊕ RK_matrix[5]:
+ 1) ⊕ RK_matrix_5
 b1  05  d2  c6
 29  41  10  42
 3b  85  d2  9b
@@ -2622,7 +2626,7 @@ b1  08  04  e7
 ca  fc  b1  b2
 51  54  c9  6c
 ed  e1  d3  20
- 1) ⊕ RK_matrix[4]:
+ 1) ⊕ RK_matrix_4
 a1  b4  d7  14
 12  68  51  52
 02  be  57  49
@@ -2656,7 +2660,7 @@ Add Roundkey Round 7 ===============================================
 76  76  3c  39
 30  7d  37  34
 54  23  5b  f1
- 1) ⊕ RK_matrix[3]:
+ 1) ⊕ RK_matrix_3
 d2  15  63  c3
 60  7a  39  03
 0d  bc  e9  1e
@@ -2690,7 +2694,7 @@ Add Roundkey Round 8 ===============================================
 c6  57  08  f8
 a9  c0  eb  7f
 62  c8  fe  37
- 1) ⊕ RK_matrix[2]:
+ 1) ⊕ RK_matrix_2
 56  c7  76  a0
 08  1a  43  3a
 20  b1  55  f7
@@ -2724,7 +2728,7 @@ Add Roundkey Round 9 ===============================================
 47  b6  d4  39
 08  1c  e2  df
 8b  ba  e8  ce
- 1) ⊕ RK_matrix[1]:
+ 1) ⊕ RK_matrix_1
 e2  91  b1  d6
 32  12  59  79
 fc  91  e4  a2
@@ -2758,7 +2762,7 @@ Add Roundkey Round 10 ===============================================
 1f  4e  22  74
 0e  08  1b  31
 54  59  0b  1a
- ⊕ RK_matrix[0]:
+ ⊕ RK_matrix_0
 54  73  20  67
 68  20  4b  20
 61  6d  75  46
